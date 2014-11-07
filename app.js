@@ -6,16 +6,21 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var fs = require('fs');
+var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy; //for fun
 //var mongo = require('mongodb');
 //var monk = require('monk');
 //var db = monk('localhost:27017/Twitter');
-var mongoose = require('mongoose');
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+
+//initialize passport
+require('./passport_cfg')(passport);
+
 
 var app = express();
 

@@ -20,13 +20,15 @@ var UserSchema = new Schema({
     name: String
 });*/
 
-UserSchema.statics.signup = function(email, password, callback) {
+UserSchema.statics.signup = function(email, password, name, callback) {
     var User = this;
+    
     hash(password, function(err, salt, hash) {
         if(err) throw err;
         User.create({
             email: email,
             salt: salt,
+            name: name,
             hash: hash
         }, function(err, user) {
             if (err) throw err;
