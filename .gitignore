@@ -3,6 +3,7 @@
 *._0
 *.ns
 node_modules
+data
 # Logs
 logs
 *.log

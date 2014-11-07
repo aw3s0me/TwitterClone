@@ -18,6 +18,8 @@ block content
                                 .input-group
                                     span.input-group-addon.glyphicon.glyphicon-user
                                     input(placeholder="Name", required="required", maxlength="80", type="text", name="name").form-control.input-lg
+                                if userExError
+                                    label #{userExError}
                                 .input-group
                                     span.input-group-addon.glyphicon.glyphicon-asterisk
                                     input(placeholder="Password", required="required", maxlength="30", type="text", name="password").form-control.input-lg

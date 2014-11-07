@@ -11,12 +11,12 @@ html(lang='en')
                 .navbar-header
                     a(href='/').navbar-brand Twitter Clone
                 .navbar-collapse.collapse
-                    form.navbar-form.navbar-right
+                    form(method="post", action="signin", accept-charset="utf-8").navbar-form.navbar-right
                         .form-group
                             input(type='text', placeholder='Email', name='email').form-control
                         .form-group
                             input(type='text', placeholder='Password', name='password').form-control
-                        .button(type='submit').btn.btn-success.btn-auth Sign in
+                        button(type='submit').btn.btn-success.btn-auth Sign in
                         a(href="signup").btn.btn-primary.btn-auth Sign up
         .container.content
             block content

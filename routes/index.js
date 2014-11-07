@@ -1,5 +1,6 @@
 var express = require('express');
 var passport = require('passport');
+//
 var auth = require('../middlewares/auth.js');
 var User = require('../models/users');
 var router = express.Router();
@@ -23,23 +24,33 @@ router.get('/signup', function(req, res) {
 });
 
 router.post('/signup', function(req, res, callback) {
-    if (auth.userExist(req, res, callback)) {
-        return res.redirect('/signup');
-    }
+    //if (auth.userExist(req, res, callback) !== 0) {
+    var users = User.find({ email: req.body.email}, function(err, c) { //check if exists
+        if (c.length) {
+            //console.log(c);
+            return res.render('signup', { userExError: 'User with this email already exists'});
+            //return res.redirect('/signup');
+        }
+        else {
+            User.signup(req.body.email, req.body.password, req.body.name, function(err, user){ //if doesnt exist -> create user
+                if(err) throw err;
+                req.login(user, function(err){
+                    if(err) return callback(err);
+                    return res.redirect("myfeed");
+                });
+            });
+        }
+    });
+    
+    
     //if (req.body.password !== req.body.reppassword)
         //return callback(err);
     //res.render('test', {name: req.body.name, email: req.body.email, password: req.body.password, reppassword: req.body.reppassword});
-    User.signup(req.body.email, req.body.password, req.body.name, function(err, user){
-        if(err) throw err;
-        req.login(user, function(err){
-            if(err) return callback(err);
-            return res.redirect("myfeed");
-        });
-    });
+    
 });
 
 router.post('/signin', passport.authenticate('local', {
-    successRedirect : "/myfeed", //redirect to user wall
+    successRedirect : "/myfeed", //redirect to user tweets
     failureRedirect : "/",
 }));
 

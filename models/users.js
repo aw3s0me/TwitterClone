@@ -22,7 +22,7 @@ var UserSchema = new Schema({
 
 UserSchema.statics.signup = function(email, password, name, callback) {
     var User = this;
-    
+
     hash(password, function(err, salt, hash) {
         if(err) throw err;
         User.create({
@@ -40,10 +40,15 @@ UserSchema.statics.signup = function(email, password, name, callback) {
 UserSchema.statics.isValidCredentials = function(email, password, callback) { //Check user credentials
     this.findOne({email: email}, function(err, user) { //1. find user
         if (err) callback(err);
-        if (!user) callback(null, false, { message: 'Incorrect mail'});
+        if (!user) {
+            callback(null, false, { message: 'Incorrect mail'});
+            return;
+        }
         hash(password, user.salt, function(err, hash) { //check password hashes
             if (err) callback(err);
-            if (hash === user.hash) return callback(null, user);
+            console.log(hash, user.hash);
+            if (hash == user.hash) return callback(null, user);
+            console.log('Incorrect password')
             callback(null, false, { message: 'Incorrect password'});
         });
     });
