@@ -1,0 +1,9 @@
+*.lock
+*.0
+*._0
+*.ns
+node_modules
+# Logs
+logs
+*.log
+prealloc.*

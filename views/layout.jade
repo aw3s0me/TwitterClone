@@ -1,7 +1,26 @@
 doctype html
-html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+html(lang='en')
+    head
+        title Twitter Clone
+        link(rel='stylesheet', href='/css/bootstrap.css')
+        link(rel='stylesheet', href='/css/bootstrap-theme.css')
+        link(rel='stylesheet', href='/css/style.css')   
+    body
+        .navbar.navbar-inverse.navbar-fixed-top
+            .container
+                .navbar-header
+                    a(href='#').navbar-brand Twitter Clone
+                .navbar-collapse.collapse
+                    form.navbar-form.navbar-right
+                        .form-group
+                            input(type='text', placeholder='Email', name='email').form-control
+                        .form-group
+                            input(type='text', placeholder='Password', name='password').form-control
+                        .button(type='submit').btn.btn-success.btn-auth Sign in
+                        a(href="signup").btn.btn-primary.btn-auth Sign up
+        .container.content
+            block content
+        .container
+            hr
+            footer
+                p Twitter Clone by Aleksandr Korovin 2014

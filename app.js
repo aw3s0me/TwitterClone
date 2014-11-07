@@ -4,6 +4,11 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var fs = require('fs');
+//var mongo = require('mongodb');
+//var monk = require('monk');
+//var db = monk('localhost:27017/Twitter');
+var mongoose = require('mongoose');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -21,6 +26,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+/*app.use(function(req,res,next){
+    req.db = db;
+    next();
+}); */
 
 app.use('/', routes);
 app.use('/users', users);
@@ -44,8 +54,12 @@ if (app.get('env') === 'development') {
             error: err
         });
     });
+    mongoose.connect('mongodb://localhost:27017/Twitter')
 }
 
+fs.readdirSync(__dirname + '/models').forEach(function(filename) {
+    if (~filename.indexOf('.js')) require(__dirname + '/models/' + filename);
+});
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {

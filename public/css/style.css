@@ -1,0 +1,26 @@
+body {
+  padding-top: 50px;
+  padding-bottom: 40px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.btn-auth {
+    margin-left: 5px;
+
+}
+
+.form-control {
+    margin-left: 4px;
+}
+
+.content {
+    margin-top: 50px;
+}
+
+.signup-form .input-group {
+    padding-bottom: 8px; 
+}
