@@ -18,7 +18,7 @@ module.exports = function(passport) {
         passwordField: 'password'
     }, 
     function(email, password, callback) {
-        console.log(email, password);
+        //console.log(email, password);
         User.isValidCredentials(email, password, callback);
     }));
     //no facebook for timebeing

@@ -24,3 +24,7 @@ a {
 .signup-form .input-group {
     padding-bottom: 8px; 
 }
+
+.lbl-error {
+    color: red;
+}

@@ -17,6 +17,7 @@ var FacebookStrategy = require('passport-facebook').Strategy; //for fun
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var feeds = require('./routes/feeds');
 
 //initialize passport
 require('./passport_cfg')(passport);
@@ -49,6 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/feeds', feeds);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

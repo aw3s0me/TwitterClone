@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    .container.content
+        .row
+            .col-md-6
+            h1 Tweets from #{user.name}
+        .row
+            .col-md-6
+                .well
+                    form
+                        textarea(rows='3', name='tweet').form-control
+                        button(type='submit', style='float: right').btn.btn-primary Send

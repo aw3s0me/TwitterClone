@@ -48,7 +48,7 @@ UserSchema.statics.isValidCredentials = function(email, password, callback) { //
             if (err) callback(err);
             console.log(hash, user.hash);
             if (hash == user.hash) return callback(null, user);
-            console.log('Incorrect password')
+            //console.log('Incorrect password')
             callback(null, false, { message: 'Incorrect password'});
         });
     });

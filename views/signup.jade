@@ -12,14 +12,14 @@ block content
                     .row
                         .col-xs-8.col-md-offset-2
                             form(method="post", action="signup", accept-charset="utf-8").signup-form
+                                if errorMsg
+                                    label.lbl-error #{errorMsg}
                                 .input-group
                                     span.input-group-addon.glyphicon.glyphicon-envelope
                                     input(placeholder="Email", required="required", maxlength="80", type="text", name="email").form-control.input-lg
                                 .input-group
                                     span.input-group-addon.glyphicon.glyphicon-user
                                     input(placeholder="Name", required="required", maxlength="80", type="text", name="name").form-control.input-lg
-                                if userExError
-                                    label #{userExError}
                                 .input-group
                                     span.input-group-addon.glyphicon.glyphicon-asterisk
                                     input(placeholder="Password", required="required", maxlength="30", type="text", name="password").form-control.input-lg
