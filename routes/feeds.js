@@ -10,17 +10,32 @@ router.get('/:userId', function(req, res) {
         if (err) { //critical error
             throw err;
         }
-        var tweets = Tweet.find( {_user: user._id}).sort({createdAt: 1}).exec(function(err, tweets){
-            var msgToSend = { title: 'My Tweets', user: user, tweets: tweets};
+        var tweets = Tweet.find({_user: user._id}).sort({createdAt: 1}).exec(function(err, tweets){
+            var msgToSend = { title: 'My Tweets', user: user, tweets: tweets, isFollowed: false};
             var curUser = req._passport.session.user;
+            var paramId = req.params.userId; //parameter
+
+            //check if tweet empty or too long
             if (req.query.err === 'empty') msgToSend.err = 'Tweet is empty';
             else if (req.query.err === 'toolong') msgToSend.err = 'Tweet is too long (no more than 148 symbols)';
-            if (curUser === req.params.userId) msgToSend.isMyWall = true;//if authenticated
-            return res.render('feeds', msgToSend);
+
+            //check if it is my feed
+            if (curUser === paramId) {
+                msgToSend.isMyWall = true;//if authenticated 
+                return res.render('feeds', msgToSend);  
+            }
+            else {
+                //otherwise check if it is my follower
+                User.isFollowMe(curUser, paramId, function() { //do if is follower
+                    msgToSend.isFollowed = true;
+                    return res.render('feeds', msgToSend);  
+                },
+                function() {
+                    return res.render('feeds', msgToSend);  
+                });
+            }
         });       
     });
-
-    //res.send(req.params.userId);
 });
 
 router.post('/add', function(req, res) {
@@ -42,8 +57,6 @@ router.post('/add', function(req, res) {
         createdAt: curDate,
         prettyCreatedAt: moment(curDate).format("ddd, MMM Do YY, h:mm:ss a")
     });
-    //console.log(newTweet.id, 'OOOO');
-    //console.log(_user, createdAt, content);
 
     newTweet.save(function(err) {
         if (err) throw err; //critical error
@@ -56,6 +69,23 @@ router.post('/add', function(req, res) {
             })
         });
     });
+});
+
+router.post('/follow', function(req, res) {
+    var curUserId = req._passport.session.user;
+    var followUserId = req.body.userId;
+    User.follow(curUserId, followUserId, function(err, followerId) {
+        return res.redirect('' + followUserId); 
+    });
+});
+
+router.post('/unfollow', function(req, res) {
+    var curUserId = req._passport.session.user;
+    var followUserId = req.body.userId;
+    User.unfollow(curUserId, followUserId, function(){
+        return res.redirect('' + followUserId); 
+    });
+
 });
 
 

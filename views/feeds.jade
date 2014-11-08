@@ -2,7 +2,16 @@ extends layout
 
 block content
     .container
-            h1 Tweets from #{user.name}
+        h1 Tweets from #{user.name}
+        if !isMyWall
+            if isFollowed
+                form(method="post", action='unfollow', accept-charset="utf-8")
+                    button(type='submit').btn.btn-danger Unfollow
+                    input(type="hidden", name="userId", value='' + user._id)
+            else
+                form(method="post", action='follow', accept-charset="utf-8")
+                    button(type='submit').btn.btn-success Follow
+                    input(type="hidden", name="userId", value='' + user._id)
     .container
         .tweet-box
             - each tweet in tweets

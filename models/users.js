@@ -7,22 +7,20 @@ var UserSchema = new Schema({
     name: String,
     salt: String,
     hash: String,
-    facebook: {
-        id: String,
-        email: String,
-        name: String
-    },
     tweets: [{
        type: Schema.Types.ObjectId,
        ref: 'Tweet'
+    }],
+    followers: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    followings: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }]
 });
 
-/*var fbUsersSchema = new Schema({
-    id: String,
-    email: { type: String, lowercase: true},
-    name: String
-});*/
 
 UserSchema.statics.signup = function(email, password, name, callback) {
     var User = this;
@@ -38,6 +36,82 @@ UserSchema.statics.signup = function(email, password, name, callback) {
             if (err) throw err;
             callback(null, user);
         })
+    });
+};
+
+UserSchema.statics.isFollowMe = function(meId, followerId, callback, altcallback) {
+    if (!meId || !followerId || meId == followerId) {
+        altcallback(null);
+    }
+        
+    User.findOne({_id: meId}, function(err, curUserObj){
+        if (err) throw err;
+
+        var index = curUserObj.followings.indexOf(followerId);
+        if (index > -1) {
+            callback();
+        }
+        else {
+            altcallback(null);
+        }
+    }); 
+};
+
+
+UserSchema.statics.follow = function(meId, followerId, callback) {
+    if (!meId || !followerId || meId == followerId) 
+        callback(null, followerId);
+    User.findOne({_id: meId}, function(err, curUser) {
+        if (err) throw err;
+
+        User.findOne({_id: followerId}, function(err, followUser) {
+            if (err) throw err;
+
+            curUser.followings.push(followUser._id);
+
+            followUser.followers.push(curUser._id);
+
+            curUser.save(function(err){
+                if (err) throw err;
+
+                followUser.save(function(err) {
+                    if (err) throw err;
+                    callback(null, followerId);
+                    //return res.redirect('' + followUserId); 
+                });
+            });
+        });
+    });
+};
+
+UserSchema.statics.unfollow = function(meId, followerId, callback) {
+    if (!meId || !followerId || meId == followerId) 
+        callback(null, followerId);
+    User.findOne({_id: meId}, function(err, curUser){
+        if (err) throw err;
+
+        User.findOne({_id: followerId}, function(err, followUser){
+            if (err) throw err;
+
+            //curUser.find({followings: mongoose.Types.ObjectId(followerId)});
+            //followUser.find({followers: mongoose.Types.ObjectId(meId)});
+            //curUser.followings.id(followerId).remove();
+            //followUser.followers.id(meId).remove();
+
+            var index = curUser.followings.indexOf(followerId);
+            if (index > -1) curUser.followings.splice(index, 1);
+
+            var index = followUser.followers.indexOf(meId);
+            if (index > -1) followUser.followers.splice(index, 1);
+
+            curUser.save(function(err){
+                if (err) throw err;
+                followUser.save(function(err) {
+                    if (err) throw err;
+                    callback(null);
+                });
+            });
+        }); 
     });
 };
 
@@ -57,69 +131,7 @@ UserSchema.statics.isValidCredentials = function(email, password, callback) { //
         });
     });
     //if no error -> valid
-}
-
-
-// Create a new user given a profile
-UserSchema.statics.findOrCreateOAuthUser = function(profile, callback){
-    var User = this;
-
-    // Build dynamic key query
-    var query = {};
-    query[profile.authOrigin + '.id'] = profile.id;
-
-    // Search for a profile from the given auth origin
-    User.findOne(query, function(err, user){
-        if(err) throw err;
-
-        // If a user is returned, load the given user
-        if(user){
-            callback(null, user);
-        } else {
-            // Otherwise, store user, or update information for same e-mail
-            User.findOne({ 'email' : profile.emails[0].value }, function(err, user){
-                if(err) throw err;
-
-                if(user){
-                    // Preexistent e-mail, update
-                    user[''+profile.authOrigin] = {};
-                    user[''+profile.authOrigin].id = profile.id;
-                    user[''+profile.authOrigin].email = profile.emails[0].value;
-                    user[''+profile.authOrigin].name = profile.displayName;
-
-                    user.save(function(err, user){
-                        if(err) throw err;
-                        callback(null, user);
-                    });
-                } else {
-                    // New e-mail, create
-                    
-                    // Fixed fields
-                    user = {
-                        email : profile.emails[0].value,
-                        firstName : profile.displayName.split(" ")[0],
-                        lastName : profile.displayName.replace(profile.displayName.split(" ")[0] + " ", "")
-                    };
-
-                    // Dynamic fields
-                    user[''+profile.authOrigin] = {};
-                    user[''+profile.authOrigin].id = profile.id;
-                    user[''+profile.authOrigin].email = profile.emails[0].value;
-                    user[''+profile.authOrigin].name = profile.displayName;
-
-                    User.create(
-                        user,
-                        function(err, user){
-                            if(err) throw err;
-                            callback(null, user);
-                        }
-                    );
-                }
-            });
-        }
-    });
-}
-
+};
 
 var User = mongoose.model('User', UserSchema);
 module.exports = User;
