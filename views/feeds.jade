@@ -1,13 +1,23 @@
 extends layout
 
 block content
-    .container.content
-        .row
-            .col-md-6
+    .container
+        .col-md-6.col-md-offset-3
             h1 Tweets from #{user.name}
-        .row
-            .col-md-6
-                .well
-                    form
-                        textarea(rows='3', name='tweet').form-control
-                        button(type='submit', style='float: right').btn.btn-primary Send
+    .container
+        .col-md-6.col-md-offset-2.tweet-box
+            - each tweet in tweets
+                .col-md-10.col-md-offset-2.tweet-msg
+         
+                    b #{tweet.content}
+                    <br>
+                    b
+                        a(href='/feeds/' + user._id) #{user.name}
+    .container
+        .col-md-6.col-md-offset-3
+            if err
+                label.lbl-error #{err}
+            form(method="post", action="/feeds/add", accept-charset="utf-8")
+                textarea(rows='3', name='content').form-control
+                button(type='submit').btn.btn-primary.btn-send-tweet Send
+

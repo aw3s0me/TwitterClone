@@ -11,7 +11,11 @@ var UserSchema = new Schema({
         id: String,
         email: String,
         name: String
-    }
+    },
+    tweets: [{
+       type: Schema.Types.ObjectId,
+       ref: 'Tweet'
+    }]
 });
 
 /*var fbUsersSchema = new Schema({

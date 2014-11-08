@@ -28,3 +28,18 @@ a {
 .lbl-error {
     color: red;
 }
+
+.btn-send-tweet {
+    float: right;
+    margin-top: 10px;
+}
+
+.tweet-box {
+    margin-top: 8px;
+    margin-bottom: 12px;
+}
+
+.tweet-msg {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
