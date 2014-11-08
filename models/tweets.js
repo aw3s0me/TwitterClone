@@ -7,8 +7,12 @@ var TweetSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    prettyCreatedAt: {
+        type: String
     }
 });
+
 
 var Tweet = mongoose.model('Tweet', TweetSchema);
 module.exports = Tweet;

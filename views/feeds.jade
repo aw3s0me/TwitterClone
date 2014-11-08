@@ -2,22 +2,24 @@ extends layout
 
 block content
     .container
-        .col-md-6.col-md-offset-3
             h1 Tweets from #{user.name}
     .container
-        .col-md-6.col-md-offset-2.tweet-box
+        .tweet-box
             - each tweet in tweets
-                .col-md-10.col-md-offset-2.tweet-msg
-         
-                    b #{tweet.content}
-                    <br>
-                    b
-                        a(href='/feeds/' + user._id) #{user.name}
-    .container
-        .col-md-6.col-md-offset-3
-            if err
-                label.lbl-error #{err}
-            form(method="post", action="/feeds/add", accept-charset="utf-8")
-                textarea(rows='3', name='content').form-control
-                button(type='submit').btn.btn-primary.btn-send-tweet Send
+                .col-md-12.tweet-msg
+                    .col-md-8
+                        b
+                            a(href='/feeds/' + user._id) #{user.name}
+                        <br>
+                        b.tweet #{tweet.content}
+                    .col-md-4
+                        b.msg-date #{tweet.prettyCreatedAt}
+    if isMyWall
+        .container.tweet-form
+            .col-md-6.col-md-offset-3
+                if err
+                    label.lbl-error #{err}
+                form(method="post", action="/feeds/add", accept-charset="utf-8")
+                    textarea(rows='3', name='content').form-control
+                    button(type='submit').btn.btn-primary.btn-send-tweet Send
 

@@ -3,15 +3,22 @@ var passport = require('passport');
 //
 var auth = require('../middlewares/auth.js');
 var User = require('../models/users');
+var Tweet = require('../models/tweets');
 var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-    var user = null;
     if (req.isAuthenticated()) {
-        user = req.user;
+        Tweet.find({}).sort({createdAt: -1}).limit(10).populate('_user').exec(function(err, tweets) {
+            if (err) throw err;
+            return res.render('index', { title: 'Twitter Clone', user: req.user, tweets: tweets });
+        });
     }
-    res.render('index', { title: 'Twitter Clone', user: user });
+    else {
+        return res.render('index', { title: 'Twitter Clone', user: null, tweets: [] });
+    }
+    
+    
 });
 
 /*router.get('/feeds/:userId', function(req, res) {

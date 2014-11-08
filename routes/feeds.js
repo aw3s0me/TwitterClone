@@ -1,5 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
+var moment = require('moment');
 var User = require('../models/users');
 var Tweet = require('../models/tweets');
 var router = express.Router();
@@ -9,10 +10,12 @@ router.get('/:userId', function(req, res) {
         if (err) { //critical error
             throw err;
         }
-        var tweets = Tweet.find( {_user: user._id} , function(err, tweets){
+        var tweets = Tweet.find( {_user: user._id}).sort({createdAt: 1}).exec(function(err, tweets){
             var msgToSend = { title: 'My Tweets', user: user, tweets: tweets};
+            var curUser = req._passport.session.user;
             if (req.query.err === 'empty') msgToSend.err = 'Tweet is empty';
             else if (req.query.err === 'toolong') msgToSend.err = 'Tweet is too long (no more than 148 symbols)';
+            if (curUser === req.params.userId) msgToSend.isMyWall = true;//if authenticated
             return res.render('feeds', msgToSend);
         });       
     });
@@ -23,6 +26,7 @@ router.get('/:userId', function(req, res) {
 router.post('/add', function(req, res) {
     var text = req.body.content;
     var curUser = req._passport.session.user;
+    var curDate = new Date;
 
     if (!text || text.length === 0) { //error handling
         return res.redirect(curUser + '?err=empty');
@@ -31,9 +35,12 @@ router.post('/add', function(req, res) {
         return res.redirect(curUser + '?err=toolong');
     }
 
+    
     var newTweet = new Tweet({
         content: text,
-        _user: curUser
+        _user: curUser,
+        createdAt: curDate,
+        prettyCreatedAt: moment(curDate).format("ddd, MMM Do YY, h:mm:ss a")
     });
     //console.log(newTweet.id, 'OOOO');
     //console.log(_user, createdAt, content);

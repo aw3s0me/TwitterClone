@@ -39,7 +39,19 @@ a {
     margin-bottom: 12px;
 }
 
+.tweet {
+    word-wrap: break-word;
+}
+
 .tweet-msg {
     padding-top: 4px;
     padding-bottom: 4px;
+}
+
+.msg-date {
+    float: right;
+}
+
+.tweet-form {
+    margin-top: 35px;
 }
