@@ -27,6 +27,7 @@ UserSchema.statics.signup = function(email, password, name, callback) {
 
     hash(password, function(err, salt, hash) {
         if(err) throw err;
+
         User.create({
             email: email,
             salt: salt,
@@ -95,14 +96,14 @@ UserSchema.statics.unfollow = function(meId, followerId, callback) {
 
             //curUser.find({followings: mongoose.Types.ObjectId(followerId)});
             //followUser.find({followers: mongoose.Types.ObjectId(meId)});
-            //curUser.followings.id(followerId).remove();
+            //curUser.followings.id(followerId).remove(); //doesnt work for array, probably need to populate
             //followUser.followers.id(meId).remove();
 
             var index = curUser.followings.indexOf(followerId);
             if (index > -1) curUser.followings.splice(index, 1);
 
             var index = followUser.followers.indexOf(meId);
-            if (index > -1) followUser.followers.splice(index, 1);
+            if (index > -1) followUser.followers.splice(index, 1); //splice == remove. I dont like it due to full memory realloc 
 
             curUser.save(function(err){
                 if (err) throw err;

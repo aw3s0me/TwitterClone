@@ -9,28 +9,27 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res) {
     if (req.isAuthenticated()) {
-        Tweet.find({}).sort({createdAt: -1}).limit(10).populate('_user').exec(function(err, tweets) {
+        var curUserId = req._passport.session.user;
+        User.findOne({_id: curUserId}, function(err, curUser) {
             if (err) throw err;
-            return res.render('index', { title: 'Twitter Clone', user: req.user, tweets: tweets });
+            //following tweets + my feeds to feed
+            curUser.followings.push(curUserId);
+            Tweet.find({_user : {$in: curUser.followings}}).sort({createdAt: -1}).limit(10).populate('_user').exec(function(err, tweets) {
+                if (err) throw err;
+                return res.render('index', { title: 'Twitter Clone', user: req.user, tweets: tweets });
+            });
         });
+        //All tweets
+        // Tweet.find({}).sort({createdAt: -1}).limit(10).populate('_user').exec(function(err, tweets) {
+        //     if (err) throw err;
+        //     return res.render('index', { title: 'Twitter Clone', user: req.user, tweets: tweets });
+        // });
     }
     else {
         return res.render('index', { title: 'Twitter Clone', user: null, tweets: [] });
     }
-    
-    
 });
 
-/*router.get('/feeds/:userId', function(req, res) {
-    var result = User.findOne({ _id: req.params.userId}, function(err, user) {
-        if (err) {
-            throw err;
-        }
-        return res.render('feeds', { title: 'My Tweets', user: user});
-    });
-
-    //res.send(req.params.userId);
-})*/
 
 router.get('/signup', function(req, res) {
     res.render('signup', { title: 'Registration'});
