@@ -1,6 +1,6 @@
 #Twitter clone. 
 
-##Used: Node.js, Express.js, MongoDB, Monk, Bootstrap
+##Used: Node.js, Express.js, MongoDB, Mongoose, Passport.JS, Moment.JS, Bootstrap
 
 Tip: run it with 
 
