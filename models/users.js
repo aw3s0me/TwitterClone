@@ -5,17 +5,17 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema({
     email: String,
     name: String,
-    salt: String,
+    salt: String, //protection :3
     hash: String,
     tweets: [{
        type: Schema.Types.ObjectId,
        ref: 'Tweet'
     }],
-    followers: [{
+    followers: [{ //my followers
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
-    followings: [{
+    followings: [{ //i follow somebody
         type: Schema.Types.ObjectId,
         ref: 'User'
     }]
@@ -68,7 +68,7 @@ UserSchema.statics.follow = function(meId, followerId, callback) {
         User.findOne({_id: followerId}, function(err, followUser) {
             if (err) throw err;
 
-            curUser.followings.push(followUser._id);
+            curUser.followings.push(followUser._id); 
 
             followUser.followers.push(curUser._id);
 

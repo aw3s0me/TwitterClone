@@ -9,7 +9,6 @@ var fs = require('fs');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var FacebookStrategy = require('passport-facebook').Strategy; //for fun
 var moment = require('moment');
 //var mongo = require('mongodb');
 //var monk = require('monk');

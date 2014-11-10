@@ -7,18 +7,25 @@ block content
                 h4 Github repo:
                 a(href="https://github.com/aw3s0me/TwitterClone") Github
         if user
+            input(type="hidden", name="userid", value=user._id)
+            script.
+                function getFeed(){
+                    var id = $('input[name=userid]').val();
+                    $.get('/feeds/getLast/' + id, function(data){
+                        if (data) {
+                            $(".tweet-box").html(data);
+                            console.log(data);
+                        }
+                            
+                    });
+                    setTimeout("getFeed();",5000);
+                }
+                window.onload = getFeed();
+
             .col-md-8.well
                 .row
                     .col-md-8
                         h2 My feed (10 last messages)
-                .row
-                    - each tweet in tweets
-                        .col-md-13.tweet-msg
-                            .col-md-8
-                                b
-                                    a(href='/feeds/' + tweet._user._id) #{tweet._user.name}
-                                <br>
-                                b.tweet #{tweet.content}
-                            .col-md-4
-                                b.msg-date #{tweet.prettyCreatedAt}
+                .tweet-box
+
 

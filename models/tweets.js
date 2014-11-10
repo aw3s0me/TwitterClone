@@ -8,7 +8,7 @@ var TweetSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    prettyCreatedAt: {
+    prettyCreatedAt: { //store also prettified data string. don't perform date transformation all the time
         type: String
     }
 });

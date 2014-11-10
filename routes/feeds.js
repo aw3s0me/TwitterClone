@@ -1,6 +1,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var moment = require('moment');
+var jade = require('jade');
 var User = require('../models/users');
 var Tweet = require('../models/tweets');
 var router = express.Router();
@@ -37,6 +38,29 @@ router.get('/:userId', function(req, res) {
         });       
     });
 });
+//no idea why but being without :id, gives me cast error
+router.get('/getLast/:id', function(req, res) {
+    var id = req.params.id;
+    var curUserId = req._passport.session.user;
+    //if user tries to fool, check if id and curUserId are equal
+    if (req.isAuthenticated() && curUserId && id && (id === curUserId)) {  
+        User.findOne({_id: curUserId}, function(err, curUser) {
+            if (err) throw err;
+            //following tweets + my tweets to feed
+            curUser.followings.push(curUserId);
+            Tweet.find({_user : {$in: curUser.followings}}).sort({createdAt: -1}).limit(10).populate('_user').exec(function(err, tweets) {
+                if (err) throw err;
+                var tweetObj = { tweets: tweets };
+                var html = jade.renderFile('./views/tweet.jade', tweetObj); //render with template
+                return res.send(html); //return to server
+            });
+        });
+    }
+    else {
+        return res.render('index', { tweets: [] });
+    }
+});
+
 
 router.post('/add', function(req, res) {
     var text = req.body.content;
