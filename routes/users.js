@@ -1,24 +1,28 @@
 var express = require('express');
 var mongoose = require('mongoose');
+var User = require('../models/users');
 var router = express.Router();
+
 
 
 /* GET users listing. */
 router.get('/', function(req, res) {
-  res.send('respond with a rdddesource');
+    if (req.isAuthenticated()) {
+        var userId = req._passport.session.user;
+        User.find({_id: userId}, function(err, curUser){
+            if (err) throw err;
+            User.find({}, function(err, users) {
+                if (err) throw err;
+                curUser._id = userId;
+                return res.render('users', {users: users, user: curUser});
+            });
+        })
+        
+    }
+    else {
+        return res.redirect('/');
+    }
 });
-
-router.get('/:userId', function(req, res) {
-    /*mongoose.model('users').find({user: req.params.userId}, function(err, users) {
-        mongoose.model('users').populate(users, {path: 'entry'}, function(err, users) {
-            res.send(users);
-        });
-    });*/
-    res.send(req.params.userId);
-
-});
-
-
 
 
 module.exports = router;

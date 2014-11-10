@@ -3,15 +3,15 @@ extends layout
 block content
     .container
         if !isMyWall
-            h1 Tweets from #{user.name}
+            h1 Tweets from #{seeuser.name}
             if isFollowed
                 form(method="post", action='unfollow', accept-charset="utf-8")
                     button(type='submit').btn.btn-danger Unfollow
-                    input(type="hidden", name="userId", value='' + user._id)
+                    input(type="hidden", name="userId", value='' + seeuser._id)
             else
                 form(method="post", action='follow', accept-charset="utf-8")
                     button(type='submit').btn.btn-success Follow
-                    input(type="hidden", name="userId", value='' + user._id)
+                    input(type="hidden", name="userId", value='' + seeuser._id)
         else
             h1 My posts
     .container
@@ -20,7 +20,7 @@ block content
                 .col-md-12.tweet-msg
                     .col-md-8
                         b
-                            a(href='/feeds/' + user._id) #{user.name}
+                            a(href='/feeds/' + seeuser._id) #{seeuser.name}
                         <br>
                         b.tweet #{tweet.content}
                     .col-md-4

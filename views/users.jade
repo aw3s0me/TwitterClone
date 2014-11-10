@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    .row
+        .well
+            ul
+                - each _user in users
+                    li  
+                        b
+                            a(href="/feeds/" + _user._id) #{_user.name}

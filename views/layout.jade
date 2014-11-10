@@ -17,7 +17,9 @@ html(lang='en')
                             li
                                 a(href="/logout") Logout
                             li
-                                a(href="/feeds/" + user.id) My posts/Add post
+                                a(href="/feeds/" + user._id) My posts/Add post
+                            li
+                                a(href="/users") All users (test)
                     else
                         form(method="post", action="/signin", accept-charset="utf-8").navbar-form.navbar-right
                             .form-group

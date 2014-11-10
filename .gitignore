@@ -8,3 +8,4 @@ data
 logs
 *.log
 prealloc.*
+data/journal

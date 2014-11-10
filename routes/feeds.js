@@ -7,36 +7,44 @@ var Tweet = require('../models/tweets');
 var router = express.Router();
 
 router.get('/:userId', function(req, res) {
-    var result = User.findOne({ _id: req.params.userId}, function(err, user) {
-        if (err) { //critical error
-            throw err;
-        }
-        var tweets = Tweet.find({_user: user._id}).sort({createdAt: 1}).exec(function(err, tweets){
-            var msgToSend = { title: 'My Tweets', user: user, tweets: tweets, isFollowed: false};
-            var curUser = req._passport.session.user;
-            var paramId = req.params.userId; //parameter
+    var curUserId = req._passport.session.user;
 
-            //check if tweet empty or too long
-            if (req.query.err === 'empty') msgToSend.err = 'Tweet is empty';
-            else if (req.query.err === 'toolong') msgToSend.err = 'Tweet is too long (no more than 148 symbols)';
+    User.findOne({ _id: curUserId}, function(err, curUser) {
+        if (err) throw err;
+        User.findOne({ _id: req.params.userId}, function(err, user) {
+            if (err) { //critical error
+                throw err;
+            }
+            Tweet.find({_user: user._id}).sort({createdAt: 1}).exec(function(err, tweets){
+                var msgToSend = { title: 'My Tweets', user: curUser, tweets: tweets, isFollowed: false};
+                
+                var paramId = req.params.userId; //parameter
 
-            //check if it is my feed
-            if (curUser === paramId) {
-                msgToSend.isMyWall = true;//if authenticated 
-                return res.render('feeds', msgToSend);  
-            }
-            else {
-                //otherwise check if it is my follower
-                User.isFollowMe(curUser, paramId, function() { //do if is follower
-                    msgToSend.isFollowed = true;
+                //check if tweet empty or too long
+                if (req.query.err === 'empty') msgToSend.err = 'Tweet is empty';
+                else if (req.query.err === 'toolong') msgToSend.err = 'Tweet is too long (no more than 148 symbols)';
+
+                //check if it is my feed
+                if (curUserId === paramId) {
+                    msgToSend.isMyWall = true;//if authenticated 
+                    msgToSend.seeuser = curUser; //wanna see his tweets. 
                     return res.render('feeds', msgToSend);  
-                },
-                function() {
-                    return res.render('feeds', msgToSend);  
-                });
-            }
-        });       
+                }
+                else {
+                    msgToSend.seeuser = user; //wanna see his tweets
+                    //otherwise check if it is my follower
+                    User.isFollowMe(curUserId, paramId, function() { //do if is follower
+                        msgToSend.isFollowed = true;
+                        return res.render('feeds', msgToSend);  
+                    },
+                    function() {
+                        return res.render('feeds', msgToSend);  
+                    });
+                }
+            });       
+        });
     });
+    
 });
 //no idea why but being without :id, gives me cast error
 router.get('/getLast/:id', function(req, res) {
@@ -57,7 +65,7 @@ router.get('/getLast/:id', function(req, res) {
         });
     }
     else {
-        return res.render('index', { tweets: [] });
+        return res.send('');
     }
 });
 
@@ -98,8 +106,9 @@ router.post('/add', function(req, res) {
 router.post('/follow', function(req, res) {
     var curUserId = req._passport.session.user;
     var followUserId = req.body.userId;
-    User.follow(curUserId, followUserId, function(err, followerId) {
-        return res.redirect('' + followUserId); 
+    console.log(curUserId, followUserId);
+    User.follow(curUserId, followUserId, function(err, followUserId) {
+        return res.redirect('' + followUserId);
     });
 });
 
